@@ -2,4 +2,4 @@ wp-config.php
 wp-content/uploads/
 *.wpress
 *.sql
-.env
+.envevidencias/
