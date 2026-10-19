@@ -16,6 +16,9 @@ docker compose up -d
 - WordPress: http://localhost:8080 (la primera vez muestra el instalador)
 - Mailpit (bandeja de correo de pruebas): http://localhost:8025 — en FluentSMTP usar host `mailpit`, puerto `1025`, sin autenticación. El SMTP real (Brevo/Gmail) solo en el sitio final.
 - El plugin `plugin-recompra/` ya aparece en *Plugins* (se monta desde el repo; requiere WooCommerce activo).
+- `sh scripts/configurar.sh` deja la tienda configurada con WP-CLI: idioma, pagos, zonas de envío, retiro en tienda, inicio, menú, marca de los correos, Joinchat y FluentSMTP→Mailpit. Se puede repetir sin duplicar nada. Número de WhatsApp: `MF_WHATSAPP=5939XXXXXXXX sh scripts/configurar.sh`.
+- El recordatorio de recompra queda en **modo prueba** (minutos en vez de días). En el sitio final: `wp option update mascotafeliz_modo_prueba no`.
+- Correo de ofertas (solo a quienes marcaron el consentimiento en el checkout): `wp mascotafeliz ofertas`.
 
 Para compartir el sitio base: A exporta con All-in-One WP Migration (`.wpress`) y lo deja en la carpeta compartida; los demás lo importan. Los `.wpress`, `.sql` y `uploads/` no van al repo.
 
@@ -24,7 +27,8 @@ Para compartir el sitio base: A exporta con All-in-One WP Migration (`.wpress`) 
 | Carpeta | Contenido | Responsable |
 |---|---|---|
 | `plugin-recompra/` | Plugin de recompra y botones de WhatsApp | C |
-| `plantillas-correo/` | Plantillas de WooCommerce y correo de ofertas (HTML) | B |
+| `plantillas-correo/` | Overrides de plantillas de WooCommerce (`emails/…`) y correo de ofertas (HTML); se monta en `wp-content/plantillas-correo` | B |
+| `scripts/` | Configuración de la tienda con WP-CLI | A |
 | `docs/` | Informe, manual de pedido, documentación de cada parte | B (compila), todos |
 
 ## Roles
