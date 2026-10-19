@@ -18,9 +18,17 @@ services:
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_CONFIG_EXTRA: define('DISABLE_WP_CRON', true); # lo dispara el servicio cron
     volumes:
       - wp:/var/www/html
       - ./plugin-recompra:/var/www/html/wp-content/plugins/mascotafeliz-recompra
+      - ./plantillas-correo:/var/www/html/wp-content/plantillas-correo:ro
+
+  # WP-Cron no puede llamarse a sí mismo en localhost:8080 desde el contenedor; lo dispara este.
+  cron:
+    image: curlimages/curl
+    depends_on: [wordpress]
+    entrypoint: ["sh", "-c", "while sleep 60; do curl -s -o /dev/null http://wordpress/wp-cron.php; done"]
 
   # Bandeja de correo local: en FluentSMTP usar host "mailpit", puerto 1025, sin auth.
   mailpit:
