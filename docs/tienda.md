@@ -13,6 +13,8 @@
 
 Cuatro categorías (Alimento, Accesorios, Higiene, Juguetes) y 12 productos. El alimento es un **producto variable** con dos atributos: *Especie* (Perro, Gato) y *Tamaño de bolsa* (2, 7 y 15 kg). Cada variación guarda su peso en el campo nativo de WooCommerce, que el plugin de recompra usa para calcular cuánto dura la bolsa.
 
+Las fotos de producto son de Wikimedia Commons con licencia libre (CC0, dominio público, CC BY y CC BY-SA), recortadas a 800×800 px. Están en `scripts/fotos/` con el slug de cada producto como nombre y `configurar.sh` las asigna; los autores están en [`scripts/fotos/CREDITOS.md`](../scripts/fotos/CREDITOS.md). Cada categoría usa la foto de uno de sus productos.
+
 ![Inicio](../evidencias/A/01-inicio.png)
 
 ![Tienda](../evidencias/A/02-tienda.png)
