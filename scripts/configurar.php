@@ -186,6 +186,32 @@ update_option(
 	)
 );
 
+// Fotos de producto (#34): cada archivo de scripts/fotos se llama como el slug del producto. Créditos en fotos/CREDITOS.md.
+require_once ABSPATH . 'wp-admin/includes/media.php';
+require_once ABSPATH . 'wp-admin/includes/file.php';
+require_once ABSPATH . 'wp-admin/includes/image.php';
+foreach ( glob( '/scripts/fotos/*.jpg' ) as $foto ) {
+	$producto = get_page_by_path( basename( $foto, '.jpg' ), OBJECT, 'product' );
+	if ( ! $producto || has_post_thumbnail( $producto ) ) {
+		continue;
+	}
+	$tmp = wp_tempnam( $foto ); // media_handle_sideload mueve el archivo; /scripts es de solo lectura.
+	copy( $foto, $tmp );
+	$imagen = media_handle_sideload( array( 'name' => basename( $foto ), 'tmp_name' => $tmp ), $producto->ID, $producto->post_title );
+	if ( ! is_wp_error( $imagen ) ) {
+		set_post_thumbnail( $producto, $imagen );
+	}
+}
+// Cada categoría usa la foto de uno de sus productos.
+$portadas = array( 'alimento' => 'alimento-balanceado-adulto', 'accesorios' => 'collar-ajustable', 'higiene' => 'shampoo-neutro', 'juguetes' => 'cuerda-para-morder' );
+foreach ( $portadas as $categoria => $slug ) {
+	$cat      = get_term_by( 'slug', $categoria, 'product_cat' );
+	$producto = get_page_by_path( $slug, OBJECT, 'product' );
+	if ( $cat && $producto ) {
+		update_term_meta( $cat->term_id, 'thumbnail_id', get_post_thumbnail_id( $producto ) );
+	}
+}
+
 set_theme_mod( 'product_archive_mobile_columns', 'twocolumn' ); // En móvil, una columna obligaba a hacer mucho scroll.
 set_theme_mod( 'footer_html_content', '© {year} MascotaFeliz · Cuenca, Ecuador' );
 
