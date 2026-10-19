@@ -3,4 +3,4 @@ wp-content/uploads/
 *.wpress
 *.sql
 .env
-evidencias/
+evidencias/*.pdf
