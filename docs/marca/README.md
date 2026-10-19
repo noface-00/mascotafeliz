@@ -16,7 +16,7 @@
 | palette4 | `#292524` | Texto principal | — |
 | palette5 | `#57534E` | Texto secundario | 7,2:1 sobre crema |
 | palette6 | `#78716C` | Bordes de campos | ≥ 3:1 |
-| palette7 | `#FED7AA` | Bordes suaves, etiquetas | — |
+| palette7 | `#FFEDD5` | Fondo de cabeceras de página, etiquetas | — |
 | palette8 | `#FFF7ED` | Fondo crema | — |
 | palette9 | `#FFFFFF` | Tarjetas, fondo de productos | — |
 
