@@ -14,8 +14,8 @@ wp() {
 		wordpress:cli wp "$@"
 }
 
-wp language core install es_EC --activate
-wp language plugin install woocommerce es_EC || true # si no hay traducción para es_EC, sigue en el idioma base
+wp language core install es_ES --activate # la traducción es_EC de WooCommerce deja textos del checkout en inglés
+wp language plugin install woocommerce es_ES
 wp plugin install creame-whatsapp-me fluent-smtp --activate
 wp plugin activate mascotafeliz-recompra
 wp eval-file /scripts/configurar.php

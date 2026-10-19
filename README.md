@@ -16,6 +16,7 @@ docker compose up -d
 - WordPress: http://localhost:8080 (la primera vez muestra el instalador)
 - Mailpit (bandeja de correo de pruebas): http://localhost:8025 — en FluentSMTP usar host `mailpit`, puerto `1025`, sin autenticación. El SMTP real (Brevo/Gmail) solo en el sitio final.
 - El plugin `plugin-recompra/` ya aparece en *Plugins* (se monta desde el repo; requiere WooCommerce activo).
+- Si cambias de rama y el plugin o las plantillas dejan de funcionar: `docker compose restart wordpress` (git recrea las carpetas y el contenedor sigue viendo las antiguas).
 - `sh scripts/configurar.sh` deja la tienda configurada con WP-CLI: idioma, pagos, zonas de envío, retiro en tienda, inicio, menú, marca de los correos, Joinchat y FluentSMTP→Mailpit. Se puede repetir sin duplicar nada. Número de WhatsApp: `MF_WHATSAPP=5939XXXXXXXX sh scripts/configurar.sh`.
 - El recordatorio de recompra queda en **modo prueba** (minutos en vez de días). En el sitio final: `wp option update mascotafeliz_modo_prueba no`.
 - Correo de ofertas (solo a quienes marcaron el consentimiento en el checkout): `wp mascotafeliz ofertas`.
