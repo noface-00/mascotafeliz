@@ -1,6 +1,8 @@
 services:
   db:
     image: mariadb:11
+    # Solo local: sin fsync por commit (en btrfs cada commit tardaba ~150 ms y el checkout ~15 s).
+    command: --innodb-flush-log-at-trx-commit=2
     environment:
       MARIADB_DATABASE: wordpress
       MARIADB_USER: wordpress

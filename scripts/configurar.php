@@ -150,6 +150,7 @@ update_option(
 			'message_send'  => 'Hola, quiero información sobre {TITLE}',
 			'button_tip'    => '¿Te ayudamos?',
 			'message_start' => 'Abrir chat',
+			'message_delay' => -1, // Sin apertura automática: en móvil tapaba el checkout.
 		)
 	)
 );
@@ -184,5 +185,8 @@ update_option(
 		'misc'        => array( 'log_emails' => 'yes', 'default_connection' => 'mailpit', 'fallback_connection' => '', 'log_saved_interval_days' => '14', 'disable_fluentcrm_logs' => 'no' ),
 	)
 );
+
+set_theme_mod( 'product_archive_mobile_columns', 'twocolumn' ); // En móvil, una columna obligaba a hacer mucho scroll.
+set_theme_mod( 'footer_html_content', '© {year} MascotaFeliz · Cuenca, Ecuador' );
 
 WP_CLI::success( 'Tienda configurada.' );
