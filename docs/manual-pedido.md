@@ -6,7 +6,7 @@ Guía para comprar en MascotaFeliz desde el celular o el computador.
 
 ![Tienda](../evidencias/A/movil/03-tienda.png)
 
-**2. Elige especie y tamaño de bolsa** (solo en el alimento) y pulsa **Añadir al carrito**. Si tienes dudas sobre la raza o la ración, pulsa **Consultar por WhatsApp**: se abre el chat con el producto ya escrito.
+**2. Elige especie y tamaño de bolsa** (solo en el alimento) y pulsa **Añadir al carrito**. Si tienes dudas sobre la raza o la ración, en el recuadro **Consultar por WhatsApp** pulsa **Para gato** o **Para perro**: se abre el chat con el producto ya escrito.
 
 ![Ficha de producto](../evidencias/A/movil/04-ficha-whatsapp.png)
 

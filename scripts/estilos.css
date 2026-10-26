@@ -164,16 +164,50 @@
 }
 .woocommerce-error, .wc-block-components-notice-banner.is-error { border-color: var(--global-palette13, #B82105) !important; }
 
-/* Ficha de producto */
+/* Ficha de producto: una columna de decisión con ritmo de 24 px */
 .single-product div.product .woocommerce-product-gallery img { border-radius: 24px; }
-.single-product div.product .product_title { font-family: Fredoka, sans-serif; font-weight: 700; font-size: clamp(30px, 3.5vw, 40px); line-height: 1.1; }
-.single-product div.product .summary .price { font-family: Fredoka, sans-serif; font-weight: 600; font-size: 28px; color: var(--mf-tinta); }
-.single-product div.product .woocommerce-product-details__short-description { color: var(--mf-texto); font-size: 17px; }
-.single-product div.product form.cart { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-.single-product div.product form.cart.variations_form { display: block; }
-.single-product div.product form.cart .single_add_to_cart_button { padding: 12px 32px; font-size: 17px; }
-.single-product div.product .product_meta { color: var(--mf-texto); font-size: 14px; }
-.single-product .mf-whatsapp { display: inline-block; padding: 13px 24px; border-radius: 999px; min-height: 48px; box-sizing: border-box; } /* Forma aquí; el plugin solo pone el verde. */
+.single-product .woocommerce-product-gallery__trigger { width: 44px; height: 44px; border-radius: 999px; background: #FFFFFF; }
+.single-product div.product .product_title { font-family: Fredoka, sans-serif; font-weight: 700; font-size: clamp(30px, 3.5vw, 40px); line-height: 1.1; margin-bottom: 12px; }
+.single-product div.product .summary .price { font-family: Fredoka, sans-serif; font-weight: 600; font-size: 28px; color: var(--mf-tinta); margin-bottom: 16px; }
+.single-product div.product .woocommerce-product-details__short-description { color: var(--mf-texto); font-size: 17px; line-height: 1.55; max-width: 460px; margin-bottom: 24px; }
+.single-product div.product form.cart { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 24px; }
+.single-product div.product form.cart.variations_form { display: block; max-width: 460px; }
+.single-product div.product form.cart .single_add_to_cart_button { flex: 1 1 200px; max-width: 320px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; padding: 0 32px; font-size: 17px; line-height: 1.2; }
+.single-product div.product form.cart .single_add_to_cart_button.disabled {
+	background: #E7E5E4; border-color: #E7E5E4; color: var(--mf-texto); opacity: 1; cursor: not-allowed;
+}
+/* Variaciones: etiqueta arriba y selector a todo el ancho, como los campos del checkout */
+.single-product table.variations, .single-product table.variations tbody, .single-product table.variations tr,
+.single-product table.variations th, .single-product table.variations td { display: block; width: 100%; padding: 0; border: 0; background: transparent; }
+.single-product table.variations { margin: 0 0 20px; }
+.single-product table.variations tr + tr { margin-top: 16px; }
+.single-product table.variations th.label { margin-bottom: 6px; line-height: 1.3; }
+.single-product table.variations th.label label { font-size: 15px; font-weight: 700; color: var(--mf-tinta); }
+.single-product table.variations td.value { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.single-product table.variations select { width: 100%; min-height: 48px; padding: 0 40px 0 16px; font-size: 16px; }
+.single-product table.variations .reset_variations { font-size: 14px; color: var(--mf-marca); padding: 8px 0; }
+.single-product .single_variation_wrap .woocommerce-variation-price .price { font-size: 24px; margin: 0 0 16px; }
+.single-product .woocommerce-variation-add-to-cart { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+/* Consulta por WhatsApp: tarjeta crema como el resto del sitio; el verde solo en el icono */
+.mf-consulta { display: flex; gap: 14px; align-items: flex-start; max-width: 460px; box-sizing: border-box; margin: 8px 0 24px; padding: 18px 20px; border-radius: 20px; background: var(--mf-crema); }
+.mf-consulta__icono { flex: none; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; background: #25D366; color: #FFFFFF; }
+.mf-consulta__texto { min-width: 0; }
+.woocommerce div.product div.summary .mf-consulta p { margin: 0; font-size: 15px; line-height: 1.45; color: var(--mf-texto); }
+.woocommerce div.product div.summary .mf-consulta .mf-consulta__titulo { padding-top: 10px; margin-bottom: 4px; font-family: Fredoka, sans-serif; font-weight: 600; font-size: 18px; line-height: 24px; color: var(--mf-tinta); } /* 10 + 24/2 = centro del icono de 44 px. */
+.mf-consulta__opciones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.mf-whatsapp {
+	display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; box-sizing: border-box;
+	border: 1.5px solid var(--mf-tinta); border-radius: 999px; background: #FFFFFF; color: var(--mf-tinta);
+	font-weight: 700; font-size: 15px; text-decoration: none;
+	transition: background-color 150ms ease, color 150ms ease, transform 120ms var(--mf-ease-out);
+}
+.mf-whatsapp:focus-visible { background: var(--mf-tinta); color: #FFFFFF; }
+.mf-whatsapp:active { transform: scale(0.97); }
+.single-product div.product .product_meta { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--mf-borde); color: var(--mf-texto); font-size: 14px; }
+.single-product div.product .product_meta .sku_wrapper { display: none; } /* La tienda no usa SKU: siempre decía «N/D». */
+.single-product div.product .product_meta > span { font-size: 14px; }
+.single-product div.product .product_meta a { color: var(--mf-marca); }
+.product-type-variable .woocommerce-product-attributes-item--weight { display: none; } /* El padre variable no tiene peso: decía «N/D»; cada bolsa lo indica en su opción. */
 .woocommerce div.product .woocommerce-tabs ul.tabs { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin-bottom: 24px; }
 .woocommerce div.product .woocommerce-tabs ul.tabs::before, .woocommerce div.product .woocommerce-tabs ul.tabs li::before, .woocommerce div.product .woocommerce-tabs ul.tabs li::after { display: none; }
 .woocommerce div.product .woocommerce-tabs ul.tabs li { margin: 0; border: 0; border-radius: 999px; background: var(--mf-crema); }
@@ -181,6 +215,7 @@
 .woocommerce div.product .woocommerce-tabs ul.tabs li.active { background: var(--mf-tinta); }
 .woocommerce div.product .woocommerce-tabs ul.tabs li.active a { color: #FFFFFF; }
 .woocommerce div.product .woocommerce-tabs .panel > h2:first-child { display: none; }
+.woocommerce div.product .woocommerce-tabs { border: 0; } /* Kadence enmarca las pestañas en móvil; aquí son píldoras como en escritorio. */
 .woocommerce table.shop_attributes { border: 0; }
 .woocommerce table.shop_attributes th, .woocommerce table.shop_attributes td { border-bottom: 1px solid var(--mf-borde); padding: 12px 16px; font-style: normal; background: transparent; }
 .related > h2, .upsells > h2 { font-family: Fredoka, sans-serif; font-weight: 600; font-size: 32px; }
@@ -213,6 +248,7 @@
 .woocommerce table.shop_table { border: 1px solid var(--mf-borde); border-radius: 16px; overflow: hidden; }
 
 @media (hover: hover) and (pointer: fine) {
+	.mf-whatsapp:hover { background: var(--mf-tinta); color: #FFFFFF; }
 	.mf-categoria:hover { color: var(--mf-tinta); transform: translateY(-2px); }
 	.woocommerce ul.products li.product:hover { border-color: var(--mf-marca); transform: translateY(-2px); }
 }
@@ -236,7 +272,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.mf-boton, .mf-categoria, .woocommerce ul.products li.product, .woocommerce .button, .wc-block-components-button, .wp-element-button { transition: none; }
+	.mf-whatsapp, .mf-boton, .mf-categoria, .woocommerce ul.products li.product, .woocommerce .button, .wc-block-components-button, .wp-element-button { transition: none; }
 	.woocommerce .button:active, .wc-block-components-button:active, .wp-element-button:active,
-	.mf-boton:active, .mf-categoria:active, .mf-categoria:hover, .woocommerce ul.products li.product:hover { transform: none; }
+	.mf-whatsapp:active, .mf-boton:active, .mf-categoria:active, .mf-categoria:hover, .woocommerce ul.products li.product:hover { transform: none; }
 }

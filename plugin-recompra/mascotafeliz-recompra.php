@@ -135,20 +135,29 @@ add_action(
 	4
 );
 
-// Botón wa.me en la ficha: uno por especie, con el producto y la raza para completar.
+// Bloque de consulta wa.me en la ficha: un enlace por especie, con el producto y la raza para completar.
 add_action(
 	'woocommerce_single_product_summary',
 	function () {
 		global $product;
 		$especies = array_filter( array_map( 'trim', explode( ',', (string) $product->get_attribute( 'pa_especie' ) ) ) ) ?: array( '' );
+		$enlaces  = '';
 		foreach ( $especies as $especie ) {
-			$texto = 'Hola, quiero información sobre ' . $product->get_name() . ( $especie ? ' para mi ' . strtolower( $especie ) : '' ) . '. Raza: ';
-			printf(
-				'<p><a class="mf-whatsapp" href="%s" target="_blank" rel="noopener" style="background:#25D366;color:#1C1917;font-weight:700;text-decoration:none">Consultar por WhatsApp%s</a></p>',
+			$texto     = 'Hola, quiero información sobre ' . $product->get_name() . ( $especie ? ' para mi ' . strtolower( $especie ) : '' ) . '. Raza: ';
+			$etiqueta  = $especie ? 'Para ' . strtolower( $especie ) : 'Abrir chat';
+			$enlaces  .= sprintf(
+				'<a class="mf-whatsapp" href="%s" target="_blank" rel="noopener" aria-label="%s">%s</a>',
 				esc_url( mf_wa_link( $texto ) ),
-				$especie ? ' (' . esc_html( $especie ) . ')' : ''
+				esc_attr( 'Consultar por WhatsApp' . ( $especie ? ' para ' . strtolower( $especie ) : '' ) ),
+				esc_html( $etiqueta )
 			);
 		}
+		$icono = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>';
+		printf(
+			'<div class="mf-consulta"><span class="mf-consulta__icono">%s</span><div class="mf-consulta__texto"><p class="mf-consulta__titulo">Consultar por WhatsApp</p><p>¿Dudas sobre la raza o la ración? Se abre el chat con el producto ya escrito.</p><div class="mf-consulta__opciones">%s</div></div></div>',
+			$icono, // SVG fijo, sin datos del usuario.
+			$enlaces // Ya escapado arriba.
+		);
 	},
 	35
 );
