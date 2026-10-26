@@ -3,7 +3,7 @@
  * Configura la tienda local. Se ejecuta con scripts/configurar.sh; es idempotente.
  */
 
-$whatsapp = getenv( 'MF_WHATSAPP' ) ?: '593999999999';
+$whatsapp = getenv( 'MF_WHATSAPP' ) ?: mf_whatsapp(); // Sin MF_WHATSAPP conserva el número ya guardado.
 update_option( 'mascotafeliz_whatsapp', $whatsapp );
 update_option( 'mascotafeliz_modo_prueba', 'yes' ); // Recordatorio en minutos; poner 'no' en el sitio final.
 
