@@ -107,7 +107,8 @@ add_action(
 	function ( $order_id, $item_id, $dias ) {
 		$order = wc_get_order( $order_id );
 		$item  = $order ? $order->get_item( $item_id ) : null;
-		if ( ! $item || ! $item->get_product() ) {
+		// Se programa ya en «en espera» (transferencia); si nunca se pagó o se canceló, no se avisa.
+		if ( ! $item || ! $item->get_product() || ! $order->has_status( array( 'processing', 'completed' ) ) ) {
 			return;
 		}
 		$nombre  = $item->get_name();
