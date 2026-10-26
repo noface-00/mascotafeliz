@@ -94,6 +94,9 @@ if ( ! $menu ) {
 	wp_update_nav_menu_item( $menu_id, 0, array( 'menu-item-object' => 'page', 'menu-item-object-id' => wc_get_page_id( 'shop' ), 'menu-item-type' => 'post_type', 'menu-item-status' => 'publish' ) );
 	foreach ( array( 'alimento', 'accesorios', 'higiene', 'juguetes' ) as $slug ) {
 		$cat = get_term_by( 'slug', $slug, 'product_cat' );
+		if ( ! $cat ) {
+			continue;
+		}
 		wp_update_nav_menu_item( $menu_id, 0, array( 'menu-item-object' => 'product_cat', 'menu-item-object-id' => $cat->term_id, 'menu-item-type' => 'taxonomy', 'menu-item-status' => 'publish' ) );
 	}
 	wp_update_nav_menu_item( $menu_id, 0, array( 'menu-item-object' => 'page', 'menu-item-object-id' => wc_get_page_id( 'myaccount' ), 'menu-item-type' => 'post_type', 'menu-item-status' => 'publish' ) );
@@ -198,6 +201,7 @@ foreach ( array( 'alimento', 'accesorios', 'higiene', 'juguetes' ) as $slug ) {
 foreach ( array( 'foto_hero' => 'cama-acolchada', 'foto_perro' => 'pelota-de-goma', 'foto_snack' => 'snacks-dentales' ) as $clave => $slug ) {
 	$enlaces[ "{{{$clave}}}" ] = get_the_post_thumbnail_url( get_page_by_path( $slug, OBJECT, 'product' ), 'large' );
 }
+$enlaces = array_filter( $enlaces, 'is_string' ); // Una categoría o foto que falte devuelve WP_Error/false y tumbaba strtr.
 wp_update_post( array( 'ID' => $inicio_id, 'post_content' => strtr( file_get_contents( '/scripts/inicio.html' ), $enlaces ) ) );
 update_post_meta( $inicio_id, '_kad_post_layout', 'fullwidth' );
 update_post_meta( $inicio_id, '_kad_post_content_style', 'unboxed' );
@@ -228,7 +232,10 @@ $pagina = function ( $titulo ) {
 };
 $tienda   = '';
 foreach ( array( 'alimento' => 'Alimento', 'accesorios' => 'Accesorios', 'higiene' => 'Higiene', 'juguetes' => 'Juguetes' ) as $slug => $nombre ) {
-	$tienda .= '<li><a href="' . esc_url( get_term_link( $slug, 'product_cat' ) ) . '">' . $nombre . '</a></li>';
+	$url = get_term_link( $slug, 'product_cat' );
+	if ( ! is_wp_error( $url ) ) {
+		$tienda .= '<li><a href="' . esc_url( $url ) . '">' . $nombre . '</a></li>';
+	}
 }
 $columnas = array(
 	'footer1' => '<p class="mf-pie__marca">MascotaFeliz</p><p>Todo para el bienestar de tu perro o gato, con atención cercana y envío a casa.</p><p>Av. Solano y 12 de Abril, Cuenca</p>',
