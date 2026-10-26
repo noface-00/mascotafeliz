@@ -173,7 +173,7 @@
 .single-product div.product form.cart.variations_form { display: block; }
 .single-product div.product form.cart .single_add_to_cart_button { padding: 12px 32px; font-size: 17px; }
 .single-product div.product .product_meta { color: var(--mf-texto); font-size: 14px; }
-.single-product .mf-whatsapp { border-radius: 999px !important; min-height: 48px; box-sizing: border-box; padding: 13px 24px !important; }
+.single-product .mf-whatsapp { display: inline-block; padding: 13px 24px; border-radius: 999px; min-height: 48px; box-sizing: border-box; } /* Forma aquí; el plugin solo pone el verde. */
 .woocommerce div.product .woocommerce-tabs ul.tabs { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin-bottom: 24px; }
 .woocommerce div.product .woocommerce-tabs ul.tabs::before, .woocommerce div.product .woocommerce-tabs ul.tabs li::before, .woocommerce div.product .woocommerce-tabs ul.tabs li::after { display: none; }
 .woocommerce div.product .woocommerce-tabs ul.tabs li { margin: 0; border: 0; border-radius: 999px; background: var(--mf-crema); }

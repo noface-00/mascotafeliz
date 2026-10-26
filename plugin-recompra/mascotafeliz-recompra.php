@@ -144,7 +144,7 @@ add_action(
 		foreach ( $especies as $especie ) {
 			$texto = 'Hola, quiero información sobre ' . $product->get_name() . ( $especie ? ' para mi ' . strtolower( $especie ) : '' ) . '. Raza: ';
 			printf(
-				'<p><a class="mf-whatsapp" href="%s" target="_blank" rel="noopener" style="display:inline-block;padding:12px 20px;border-radius:8px;background:#25D366;color:#1C1917;font-weight:700;text-decoration:none">Consultar por WhatsApp%s</a></p>',
+				'<p><a class="mf-whatsapp" href="%s" target="_blank" rel="noopener" style="background:#25D366;color:#1C1917;font-weight:700;text-decoration:none">Consultar por WhatsApp%s</a></p>',
 				esc_url( mf_wa_link( $texto ) ),
 				$especie ? ' (' . esc_html( $especie ) . ')' : ''
 			);
