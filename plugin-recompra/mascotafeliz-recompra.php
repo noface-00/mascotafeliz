@@ -87,11 +87,12 @@ add_action(
 			$especie = 'gato' === strtolower( (string) $producto->get_attribute( 'pa_especie' ) ) ? 'gato' : 'perro';
 			$gramos  = MF_CONSUMO[ $especie ][ $tamano ] ?? MF_CONSUMO[ $especie ]['mediano'];
 			$dias    = mf_dias( (float) $producto->get_weight() * $item->get_quantity(), $gramos );
+			$antes   = max( 1, min( MF_AVISO_DIAS_ANTES, $dias - 1 ) ); // Bolsas que duran ≤5 días: avisa al día 1 con lo que de verdad queda.
 
 			as_schedule_single_action(
-				time() + max( $dias - MF_AVISO_DIAS_ANTES, 1 ) * $unidad,
+				time() + max( $dias - $antes, 1 ) * $unidad,
 				'mascotafeliz_recordatorio',
-				array( $order_id, $item_id, $dias ),
+				array( $order_id, $item_id, $dias, $antes ),
 				'mascotafeliz'
 			);
 		}
@@ -104,7 +105,7 @@ add_action(
 
 add_action(
 	'mascotafeliz_recordatorio',
-	function ( $order_id, $item_id, $dias ) {
+	function ( $order_id, $item_id, $dias, $antes = MF_AVISO_DIAS_ANTES ) { // Las acciones viejas llegan con 3 argumentos.
 		$order = wc_get_order( $order_id );
 		$item  = $order ? $order->get_item( $item_id ) : null;
 		// Se programa ya en «en espera» (transferencia); si nunca se pagó o se canceló, no se avisa.
@@ -121,7 +122,7 @@ add_action(
 			esc_html( $order->get_billing_first_name() ),
 			esc_html( $nombre ),
 			$dias,
-			MF_AVISO_DIAS_ANTES,
+			$antes,
 			esc_url( $comprar ),
 			$boton,
 			esc_url( $wa ),
@@ -131,7 +132,7 @@ add_action(
 		$mailer->send( $order->get_billing_email(), 'Se está acabando el alimento de tu mascota', $mailer->wrap_message( '¿Reponemos el alimento?', $cuerpo ) );
 	},
 	10,
-	3
+	4
 );
 
 // Botón wa.me en la ficha: uno por especie, con el producto y la raza para completar.
