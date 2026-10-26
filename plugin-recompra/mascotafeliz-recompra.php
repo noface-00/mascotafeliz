@@ -168,15 +168,35 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	WP_CLI::add_command(
 		'mascotafeliz ofertas',
 		function () {
-			$html = file_get_contents( WP_CONTENT_DIR . '/plantillas-correo/ofertas.html' );
-			$enviados = array();
-			foreach ( wc_get_orders( array( 'limit' => -1 ) ) as $order ) {
-				$correo = $order->get_billing_email();
-				if ( $correo && ! isset( $enviados[ $correo ] ) && mf_campo( $order, 'mascotafeliz/ofertas' ) ) {
-					$enviados[ $correo ] = wp_mail( $correo, 'Ofertas de la semana en MascotaFeliz', $html, array( 'Content-Type: text/html; charset=UTF-8' ) );
+			$html     = file_get_contents( WP_CONTENT_DIR . '/plantillas-correo/ofertas.html' );
+			$bajas    = (array) get_option( 'mascotafeliz_bajas', array() );
+			$vistos   = array();
+			$enviados = 0;
+			foreach ( wc_get_orders( array( 'limit' => -1 ) ) as $order ) { // Del más reciente al más antiguo.
+				$correo = strtolower( $order->get_billing_email() );
+				if ( ! $correo || isset( $vistos[ $correo ] ) ) {
+					continue;
+				}
+				$vistos[ $correo ] = true; // Decide solo el último pedido: si desmarcó la casilla, ya no recibe.
+				if ( mf_campo( $order, 'mascotafeliz/ofertas' ) && ! in_array( $correo, $bajas, true ) ) {
+					$enviados += (int) wp_mail( $correo, 'Ofertas de la semana en MascotaFeliz', $html, array( 'Content-Type: text/html; charset=UTF-8' ) );
 				}
 			}
-			WP_CLI::success( count( $enviados ) . ' correos de ofertas enviados.' );
+			WP_CLI::success( "$enviados correos de ofertas enviados." );
+		}
+	);
+
+	// Quien responde «BAJA» deja de recibir ofertas: `wp mascotafeliz baja correo@ejemplo.com`.
+	WP_CLI::add_command(
+		'mascotafeliz baja',
+		function ( $args ) {
+			$correo = strtolower( sanitize_email( $args[0] ?? '' ) );
+			if ( ! is_email( $correo ) ) {
+				WP_CLI::error( 'Correo no válido.' );
+			}
+			$bajas = (array) get_option( 'mascotafeliz_bajas', array() );
+			update_option( 'mascotafeliz_bajas', array_values( array_unique( array_merge( $bajas, array( $correo ) ) ) ), false );
+			WP_CLI::success( "$correo dado de baja de las ofertas." );
 		}
 	);
 }
