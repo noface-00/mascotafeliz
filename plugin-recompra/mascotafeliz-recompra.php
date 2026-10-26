@@ -87,11 +87,12 @@ add_action(
 			$especie = 'gato' === strtolower( (string) $producto->get_attribute( 'pa_especie' ) ) ? 'gato' : 'perro';
 			$gramos  = MF_CONSUMO[ $especie ][ $tamano ] ?? MF_CONSUMO[ $especie ]['mediano'];
 			$dias    = mf_dias( (float) $producto->get_weight() * $item->get_quantity(), $gramos );
+			$antes   = max( 1, min( MF_AVISO_DIAS_ANTES, $dias - 1 ) ); // Bolsas que duran ≤5 días: avisa al día 1 con lo que de verdad queda.
 
 			as_schedule_single_action(
-				time() + max( $dias - MF_AVISO_DIAS_ANTES, 1 ) * $unidad,
+				time() + max( $dias - $antes, 1 ) * $unidad,
 				'mascotafeliz_recordatorio',
-				array( $order_id, $item_id, $dias ),
+				array( $order_id, $item_id, $dias, $antes ),
 				'mascotafeliz'
 			);
 		}
@@ -104,10 +105,11 @@ add_action(
 
 add_action(
 	'mascotafeliz_recordatorio',
-	function ( $order_id, $item_id, $dias ) {
+	function ( $order_id, $item_id, $dias, $antes = MF_AVISO_DIAS_ANTES ) { // Las acciones viejas llegan con 3 argumentos.
 		$order = wc_get_order( $order_id );
 		$item  = $order ? $order->get_item( $item_id ) : null;
-		if ( ! $item || ! $item->get_product() ) {
+		// Se programa ya en «en espera» (transferencia); si nunca se pagó o se canceló, no se avisa.
+		if ( ! $item || ! $item->get_product() || ! $order->has_status( array( 'processing', 'completed' ) ) ) {
 			return;
 		}
 		$nombre  = $item->get_name();
@@ -120,7 +122,7 @@ add_action(
 			esc_html( $order->get_billing_first_name() ),
 			esc_html( $nombre ),
 			$dias,
-			MF_AVISO_DIAS_ANTES,
+			$antes,
 			esc_url( $comprar ),
 			$boton,
 			esc_url( $wa ),
@@ -130,23 +132,32 @@ add_action(
 		$mailer->send( $order->get_billing_email(), 'Se está acabando el alimento de tu mascota', $mailer->wrap_message( '¿Reponemos el alimento?', $cuerpo ) );
 	},
 	10,
-	3
+	4
 );
 
-// Botón wa.me en la ficha: uno por especie, con el producto y la raza para completar.
+// Bloque de consulta wa.me en la ficha: un enlace por especie, con el producto y la raza para completar.
 add_action(
 	'woocommerce_single_product_summary',
 	function () {
 		global $product;
 		$especies = array_filter( array_map( 'trim', explode( ',', (string) $product->get_attribute( 'pa_especie' ) ) ) ) ?: array( '' );
+		$enlaces  = '';
 		foreach ( $especies as $especie ) {
-			$texto = 'Hola, quiero información sobre ' . $product->get_name() . ( $especie ? ' para mi ' . strtolower( $especie ) : '' ) . '. Raza: ';
-			printf(
-				'<p><a class="mf-whatsapp" href="%s" target="_blank" rel="noopener" style="display:inline-block;padding:12px 20px;border-radius:8px;background:#25D366;color:#1C1917;font-weight:700;text-decoration:none">Consultar por WhatsApp%s</a></p>',
+			$texto     = 'Hola, quiero información sobre ' . $product->get_name() . ( $especie ? ' para mi ' . strtolower( $especie ) : '' ) . '. Raza: ';
+			$etiqueta  = $especie ? 'Para ' . strtolower( $especie ) : 'Abrir chat';
+			$enlaces  .= sprintf(
+				'<a class="mf-whatsapp" href="%s" target="_blank" rel="noopener" aria-label="%s">%s</a>',
 				esc_url( mf_wa_link( $texto ) ),
-				$especie ? ' (' . esc_html( $especie ) . ')' : ''
+				esc_attr( 'Consultar por WhatsApp' . ( $especie ? ' para ' . strtolower( $especie ) : '' ) ),
+				esc_html( $etiqueta )
 			);
 		}
+		$icono = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>';
+		printf(
+			'<div class="mf-consulta"><span class="mf-consulta__icono">%s</span><div class="mf-consulta__texto"><p class="mf-consulta__titulo">Consultar por WhatsApp</p><p>¿Dudas sobre la raza o la ración? Se abre el chat con el producto ya escrito.</p><div class="mf-consulta__opciones">%s</div></div></div>',
+			$icono, // SVG fijo, sin datos del usuario.
+			$enlaces // Ya escapado arriba.
+		);
 	},
 	35
 );
@@ -167,15 +178,35 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	WP_CLI::add_command(
 		'mascotafeliz ofertas',
 		function () {
-			$html = file_get_contents( WP_CONTENT_DIR . '/plantillas-correo/ofertas.html' );
-			$enviados = array();
-			foreach ( wc_get_orders( array( 'limit' => -1 ) ) as $order ) {
-				$correo = $order->get_billing_email();
-				if ( $correo && ! isset( $enviados[ $correo ] ) && mf_campo( $order, 'mascotafeliz/ofertas' ) ) {
-					$enviados[ $correo ] = wp_mail( $correo, 'Ofertas de la semana en MascotaFeliz', $html, array( 'Content-Type: text/html; charset=UTF-8' ) );
+			$html     = file_get_contents( WP_CONTENT_DIR . '/plantillas-correo/ofertas.html' );
+			$bajas    = (array) get_option( 'mascotafeliz_bajas', array() );
+			$vistos   = array();
+			$enviados = 0;
+			foreach ( wc_get_orders( array( 'limit' => -1 ) ) as $order ) { // Del más reciente al más antiguo.
+				$correo = strtolower( $order->get_billing_email() );
+				if ( ! $correo || isset( $vistos[ $correo ] ) ) {
+					continue;
+				}
+				$vistos[ $correo ] = true; // Decide solo el último pedido: si desmarcó la casilla, ya no recibe.
+				if ( mf_campo( $order, 'mascotafeliz/ofertas' ) && ! in_array( $correo, $bajas, true ) ) {
+					$enviados += (int) wp_mail( $correo, 'Ofertas de la semana en MascotaFeliz', $html, array( 'Content-Type: text/html; charset=UTF-8' ) );
 				}
 			}
-			WP_CLI::success( count( $enviados ) . ' correos de ofertas enviados.' );
+			WP_CLI::success( "$enviados correos de ofertas enviados." );
+		}
+	);
+
+	// Quien responde «BAJA» deja de recibir ofertas: `wp mascotafeliz baja correo@ejemplo.com`.
+	WP_CLI::add_command(
+		'mascotafeliz baja',
+		function ( $args ) {
+			$correo = strtolower( sanitize_email( $args[0] ?? '' ) );
+			if ( ! is_email( $correo ) ) {
+				WP_CLI::error( 'Correo no válido.' );
+			}
+			$bajas = (array) get_option( 'mascotafeliz_bajas', array() );
+			update_option( 'mascotafeliz_bajas', array_values( array_unique( array_merge( $bajas, array( $correo ) ) ) ), false );
+			WP_CLI::success( "$correo dado de baja de las ofertas." );
 		}
 	);
 }

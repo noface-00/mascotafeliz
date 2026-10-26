@@ -59,6 +59,7 @@ Checkout de bloques con dos campos propios del plugin: **tamaño de la mascota**
 - **Paleta cálida** (naranja quemado `#C2410C` sobre crema `#FFF7ED`): transmite cercanía y se diferencia de las tiendas de mascotas en azul. Todo texto pasa WCAG AA; el naranja vivo `#F97316` se descartó porque con texto blanco da 2,8:1.
 - **Sin verde en la marca**: el verde queda para WhatsApp, así el botón de consulta destaca solo.
 - **Tipografía** Fredoka (títulos, redondeada y amigable) y Nunito (texto, 16 px).
+- **Inicio, cabecera y pie** siguen la maqueta «Inicio (desktop)» con la paleta de la marca: barra superior con envío y WhatsApp, hero con foto, categorías reales, promo del recordatorio de recompra, lo más pedido y pie a cuatro columnas. El contenido está en `scripts/inicio.html` y los estilos en `scripts/estilos.css`; `configurar.sh` los aplica. Tienda, categorías, ficha de producto, carrito, checkout y Mi cuenta usan el mismo lenguaje: fondo blanco, título sobre crema alineado a la izquierda, tarjetas con borde y radio de 20 px, botones en píldora y campos con radio de 12 px. La maqueta traía datos de relleno (descuentos, newsletter, categorías que no existen) que se cambiaron por datos reales de la tienda.
 - **Móvil primero**: la mayoría de clientes compra desde el celular. Productos en dos columnas, menú en panel lateral y chat de WhatsApp sin apertura automática para no tapar el formulario.
 
 ## Revisión desde el celular
